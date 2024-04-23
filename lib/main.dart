@@ -204,10 +204,29 @@ class _SampleItemDetailsViewState extends State<SampleItemDetailsView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item Details'),
-        backgroundColor: Color.fromARGB(255, 68, 109, 113),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
+        backgroundColor: const Color.fromARGB(255, 220, 151, 124),
+      ),
+      body: ValueListenableBuilder<String>(
+        valueListenable: widget.item.name,
+        builder: (_, name, __) {
+          return Center(
+            child: Text(
+              name,
+              style: const TextStyle(
+                fontSize: 30,
+                color: Color.fromARGB(255, 123, 44, 13),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            backgroundColor: const Color.fromARGB(255, 220, 151, 124),
+            child: const Icon(Icons.edit),
             onPressed: () {
               showModalBottomSheet<String?>(
                 context: context,
@@ -220,8 +239,10 @@ class _SampleItemDetailsViewState extends State<SampleItemDetailsView> {
               });
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.delete),
+          const SizedBox(height: 16),
+          FloatingActionButton(
+            backgroundColor: const Color.fromARGB(255, 220, 151, 124),
+            child: const Icon(Icons.delete),
             onPressed: () {
               showDialog(
                 context: context,
@@ -250,12 +271,7 @@ class _SampleItemDetailsViewState extends State<SampleItemDetailsView> {
           ),
         ],
       ),
-      body: ValueListenableBuilder<String>(
-        valueListenable: widget.item.name,
-        builder: (_, name, __) {
-          return Center(child: Text(name));
-        },
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
