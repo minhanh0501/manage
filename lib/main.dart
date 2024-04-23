@@ -108,17 +108,47 @@ class _SampleItemUpdateState extends State<SampleItemUpdate> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.initialName != null ? 'Chỉnh sửa' : 'Thêm mới'),
+        backgroundColor: Color.fromARGB(255, 155, 203, 229),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pop(textEditingController.text);
+              final enteredText = textEditingController.text.trim();
+              if (enteredText.isNotEmpty) {
+                Navigator.of(context).pop(enteredText);
+              } else {
+                // Hiển thị cảnh báo nếu không nhập tên
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Cảnh báo'),
+                      content: const Text('Tên không được để trống.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Đóng'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
             icon: const Icon(Icons.save),
           )
         ],
       ),
-      body: TextFormField(
-        controller: textEditingController,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: TextFormField(
+          controller: textEditingController,
+          decoration: const InputDecoration(
+            hintText: 'Nhập tên mục...',
+            border: OutlineInputBorder(),
+          ),
+        ),
       ),
     );
   }
@@ -144,7 +174,7 @@ class SampleItemWidget extends StatelessWidget {
           title: Text(name!),
           subtitle: Text(item.id),
           leading: const CircleAvatar(
-            foregroundImage: AssetImage('assets/logo.jpg'),
+            foregroundImage: AssetImage('assets/images/images.jpg'),
           ),
           onTap: onTap,
           trailing: const Icon(Icons.keyboard_arrow_right),
@@ -174,6 +204,7 @@ class _SampleItemDetailsViewState extends State<SampleItemDetailsView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item Details'),
+        backgroundColor: Color.fromARGB(255, 68, 109, 113),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -264,39 +295,13 @@ class _SampleItemListViewState extends State<SampleItemListView> {
     });
   }
 
-  void _updateFilteredItems() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      _filteredItems = viewModel.items.where((item) {
-        final name = item.name.value.toLowerCase();
-        return name.contains(query);
-      }).toList();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sample Items'),
+        title: const Text('Document'),
         backgroundColor:
             const Color.fromARGB(255, 81, 132, 82), // Màu nền của AppBar
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              showModalBottomSheet<String?>(
-                context: context,
-                builder: (context) => const SampleItemUpdate(),
-              ).then((value) {
-                if (value != null) {
-                  viewModel.addItem(value);
-                  _updateFilteredItems(); // Cập nhật danh sách sau khi thêm mục mới
-                }
-              });
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -334,7 +339,6 @@ class _SampleItemListViewState extends State<SampleItemListView> {
                             .then((deleted) {
                           if (deleted == true) {
                             viewModel.removeItem(item.id);
-                            _updateFilteredItems(); // Cập nhật danh sách sau khi xóa mục
                           }
                         });
                       },
@@ -346,6 +350,27 @@ class _SampleItemListViewState extends State<SampleItemListView> {
           ),
         ],
       ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet<String?>(
+            context: context,
+            builder: (context) => const SampleItemUpdate(),
+          ).then((value) {
+            if (value != null) {
+              viewModel.addItem(value);
+            }
+          });
+        },
+        backgroundColor:
+            const Color.fromARGB(255, 81, 132, 82), // Màu nền của nút
+        child: const Icon(Icons.add),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50), // Bo tròn nút
+        ),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.endFloat, // Đặt vị trí ở góc phải dưới
     );
   }
 }
