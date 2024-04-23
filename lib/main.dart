@@ -108,7 +108,7 @@ class _SampleItemUpdateState extends State<SampleItemUpdate> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.initialName != null ? 'Chỉnh sửa' : 'Thêm mới'),
-        backgroundColor: Color.fromARGB(255, 155, 203, 229),
+        backgroundColor: const Color.fromARGB(255, 155, 203, 229),
         actions: [
           IconButton(
             onPressed: () {
@@ -355,6 +355,7 @@ class _SampleItemListViewState extends State<SampleItemListView> {
                             .then((deleted) {
                           if (deleted == true) {
                             viewModel.removeItem(item.id);
+                            _onSearchChanged(); // Cập nhật lại danh sách sau khi xóa
                           }
                         });
                       },
@@ -375,6 +376,7 @@ class _SampleItemListViewState extends State<SampleItemListView> {
           ).then((value) {
             if (value != null) {
               viewModel.addItem(value);
+              _onSearchChanged(); // Cập nhật lại danh sách sau khi thêm mới
             }
           });
         },
@@ -396,7 +398,7 @@ void main() async {
   final viewModel = SampleItemViewModel();
   await viewModel
       .loadItemsFromPrefs(); // Khôi phục danh sách từ shared preferences
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: SampleItemListView(),
   ));
 }
